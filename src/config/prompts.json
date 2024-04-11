@@ -1,0 +1,5 @@
+{
+  "topicsPrompt": "Please provide a list of at least 5 and no more than 10 subtopics where I can go through to learn more about the current subject.",
+  "elaboratePrompt": "Elaborate on the current subject and provide more information on it based on your last response.",
+  "morePrompt": "Please continue to provide more information on the current subject."
+}
