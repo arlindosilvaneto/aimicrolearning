@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { removeStopwords } from 'stopword';
 
 import openai from 'openai';
 import { useContext } from 'react';
@@ -10,8 +11,11 @@ export default function useOpenAI() {
   const [sending, setSending] = useState(false);
   const [topics, setTopics] = useState([]);
   const [history, setHistory] = useState([]);
+  const [stats, setStats] = useState({});
 
   const { apiKey } = useContext(AppContext);
+
+  const CONTEXT_LIMIT = 150;
 
   useEffect(() => {
     if (!openaiInstance) {
@@ -24,13 +28,15 @@ export default function useOpenAI() {
     try {
       const lastMessages = history.length > 0 ? [history[history.length - 1]] : [];
       const userMessages = [...topics, ...lastMessages];
-      // .map(message => ({
-      //   role: message.role,
-      //   content: message.content.substring(
-      //     0, Math.max(500, message.content.length)
-      //   )
-      // }));
-      const completion = await sendOpenAIMessage(prompt, 'user', userMessages);
+      const context = userMessages.map(({ content, role }) => {
+        const shortContent = removeStopwords(content.split(' ')).join(' ');
+
+        return {
+          content: shortContent.substring(0, CONTEXT_LIMIT),
+          role
+        }
+      });
+      const completion = await sendOpenAIMessage(prompt, 'user', context);
 
       // add last prompt and response to messages
       setHistory([
@@ -63,17 +69,24 @@ export default function useOpenAI() {
     try {
       const content = { role, content: prompt };
 
-      const response = await openaiInstance.chat.completions.create({
-        // engine: 'davinci',
-        model: 'gpt-3.5-turbo',
-        messages: [...contextMessages, content],
-        temperature: 0.7,
-        // max_tokens: 150
-      });
+      if (openaiInstance) {
+        const response = await openaiInstance.chat.completions.create({
+          // engine: 'davinci',
+          model: 'gpt-3.5-turbo',
+          messages: [...contextMessages, content],
+          temperature: 0.7,
+          // max_tokens: 150
+        });
 
-      setSending(false);
+        setSending(false);
+        setStats({
+          ...stats,
+          usage: response.usage
+        });
+        console.table(response.usage);
 
-      return response.choices[0].message;
+        return response.choices[0].message;
+      }
     } catch (error) {
       console.error('Error:', error);
       setSending(false);
@@ -81,5 +94,5 @@ export default function useOpenAI() {
     }
   };
 
-  return [sending, history, sendMessage, restart];
+  return { sending, history, sendMessage, restart, stats };
 }

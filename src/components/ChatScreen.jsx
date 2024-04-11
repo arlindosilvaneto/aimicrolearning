@@ -10,7 +10,7 @@ import './Main.css';
 import { useLocation } from 'react-router-dom';
 
 function ChatScreen() {
-  const [sending, history, sendMessage, restart] = useOpenAI();
+  const {sending, history, sendMessage, restart, stats} = useOpenAI();
   const [openSettings, setOpenSettings] = useState(false);
   let location = useLocation();
   
@@ -20,7 +20,9 @@ function ChatScreen() {
     const urlParams = new URLSearchParams(location.search);
     const q = urlParams.get('q');
     if (q !== null && q !== '') {
+      console.log(`Search query: ${q}`);
       sendMessage(q, true);
+      window.scrollTo(0, 0);
     }
   }, [location]);
 
@@ -51,6 +53,8 @@ function ChatScreen() {
       case 'drop':
         restart();
     }
+
+    window.scrollTo(0, 0);
   });
 
   return (
@@ -59,6 +63,7 @@ function ChatScreen() {
         <div>
           <MessagesCard
             history={history}
+            stats={stats}
             onAction={onAction} />
         </div>
       )}
