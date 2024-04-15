@@ -1,53 +1,70 @@
 import {AppContext} from '../App';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import './ConfigForm.css';
+import { Field, Form, Formik } from 'formik';
 
 export default function ConfigForm({onClose}) {
-  const context = useContext(AppContext);
+  const {
+    model,
+    apiKey,
+    startPrompt,
+    topicsPrompt,
+    elaboratePrompt,
+    setModel,
+    setApiKey,
+    setStartPrompt,
+    setTopicsPrompt,
+    setElaboratePrompt,
+  } = useContext(AppContext);
 
-  const [apiKey, setApiKey] = useState(context.apiKey);
-  const [topicsPrompt, setTopicsPrompt] = useState(context.topicsPrompt);
-  const [elaboratePrompt, setElaboratePrompt] = useState(context.elaboratePrompt);
-  const [morePrompt, setMorePrompt] = useState(context.morePrompt);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    context.setApiKey(apiKey);
-    context.setTopicsPrompt(topicsPrompt);
-    context.setElaboratePrompt(elaboratePrompt);
-    context.setMorePrompt(morePrompt);
+  const handleSubmit = (values) => {
+    setModel(values.model);
+    setApiKey(values.apiKey);
+    setStartPrompt(values.startPrompt);
+    setTopicsPrompt(values.topicsPrompt);
+    setElaboratePrompt(values.elaboratePrompt);
 
     onClose();
+  }
+
+  const handleReset = (values, _) => {
+    setApiKey('');
   }
 
   return (
     <div className='form-wrapper'>
       <div>
         <h2>Settings</h2>
-        <form autoComplete='off' onSubmit={handleSubmit} className='form-container'>
-          <label>API Key:</label>
-          <input value={apiKey} autoComplete="false" onChange={(e) => setApiKey(e.target.value)}
-            className='form-input' type="text" name="apiKey" placeholder="Enter your api key..." />
-          <label>Topics Prompt:</label>
-          <textarea value={topicsPrompt} rows={4} className='form-input' name='topicsPrompt' 
-            placeholder='Enter your topics prompt...'
-            onChange={(e) => setTopicsPrompt(e.target.value)}>{topicsPrompt}</textarea>
-          <label>Elaborate Prompt:</label>
-          <textarea value={elaboratePrompt} rows={4} className='form-input' name='elaboratePrompt' 
-            placeholder='Enter your elaborate prompt...'
-            onChange={(e) => setElaboratePrompt(e.target.value)}>{elaboratePrompt}</textarea>
-          <label>More Prompt:</label>
-          <textarea value={morePrompt} rows={4} className='form-input' name='morePrompt' 
-            placeholder='Enter your more prompt...'
-            onChange={(e) => setMorePrompt(e.target.value)}>{morePrompt}</textarea>
-            
-          <button 
-            className='submit-button send-button' 
-            type="submit">
-              Save Settings
-          </button>
-        </form>
+        <Formik
+          initialValues={{model, apiKey, startPrompt, topicsPrompt, elaboratePrompt}}
+          onSubmit={handleSubmit}>
+            <Form className='form-container'>
+              <label>GPT Model:</label>
+              <Field name='model' placeholder='Enter your api key...' className='form-input' />
+              <label>API Key:</label>
+              <Field type="password" name='apiKey' placeholder='Enter your api key...' className='form-input' />
+              <label>Start Prompt:</label>
+              <Field name='startPrompt' placeholder='Enter your start prompt...' className='form-input' as="textarea" />
+              <label>Topics Prompt:</label>
+              <Field name='topicsPrompt' placeholder='Enter your topics prompt...' className='form-input' as="textarea" />
+              <label>Elaborate Prompt:</label>
+              <Field name='elaboratePrompt' placeholder='Enter your elaborate prompt...' className='form-input' as="textarea" />
+
+              <button
+                className='submit-button send-button'
+                type='submit'>
+                  Save Settings
+              </button>
+
+              {/* <hr/>
+              <button
+                className='submit-button reset-button'
+                onClick={handleReset}>
+                  Reset
+              </button> */}
+            </Form>
+          </Formik>
       </div>
     </div>
   );

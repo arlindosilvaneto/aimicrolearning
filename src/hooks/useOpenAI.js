@@ -13,7 +13,7 @@ export default function useOpenAI() {
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState({});
 
-  const { apiKey } = useContext(AppContext);
+  const { apiKey, model } = useContext(AppContext);
 
   const CONTEXT_LIMIT = 150;
 
@@ -30,12 +30,13 @@ export default function useOpenAI() {
       const userMessages = [...topics, ...lastMessages];
       const context = userMessages.map(({ content, role }) => {
         const shortContent = removeStopwords(content.split(' ')).join(' ');
-
+        console.log(shortContent)
         return {
           content: shortContent.substring(0, CONTEXT_LIMIT),
           role
         }
       });
+
       const completion = await sendOpenAIMessage(prompt, 'user', context);
 
       // add last prompt and response to messages
@@ -72,7 +73,7 @@ export default function useOpenAI() {
       if (openaiInstance) {
         const response = await openaiInstance.chat.completions.create({
           // engine: 'davinci',
-          model: 'gpt-3.5-turbo',
+          model,
           messages: [...contextMessages, content],
           temperature: 0.7,
           // max_tokens: 150

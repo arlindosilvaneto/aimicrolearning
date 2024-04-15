@@ -23,38 +23,31 @@ function replaceSentences(text) {
   });
 }
 
-const renderes = {
+const renderers = {
   a({children, href}) {
     return  <Link to={href}>🔗 {children}</Link>
   }
 }
 
-export function MessagesCard({ history, stats, onAction}) {
-  const showStats = () => {
-    const content = `📊 Stats:\n
-    Prompt Tokens: ${stats.usage.prompt_tokens}
-    Completion Tokens: ${stats.usage.completion_tokens}
-    Total Tokens: ${stats.usage.total_tokens}`;
-
-    window.alert(content);
-  }
+export function MessagesCard({ history, onAction}) {
+  const messages = history.filter(message => message && message.role !== 'user');
 
   return (
-    <div className='message-wrapper'>
-        <div className='card-wrapper'>
-          <div className='card'>
-            <a onClick={showStats} className='stats'>ℹ️</a>
-            <Markdown components={renderes} 
-              children={replaceSentences(history[history.length - 1].content)} />
+    <div className='message-wrapper'>      
+      <div className='card-wrapper'>
+        {messages.map((message, index) => (
+          <div key={index} className='card'>
+            <Markdown components={renderers} 
+              children={replaceSentences(message.content)} />
           </div>
-        </div>
+        ))}
+      </div>
 
-        <div className='buttons'>
-          <button onClick={() => onAction('drop')}>❌<br/><span>Restart</span></button>
-          <button onClick={() => onAction('more')}>🆙<br/><span>More</span></button>
-          <button onClick={() => onAction('elaborate')}>🔄<br/><span>Elaborate</span></button>
-          <button onClick={() => onAction('topics')}>🔠<br/><span>Topics</span></button>
-        </div>
+      {messages.length > 0 && <div className='buttons'>
+        <button onClick={() => onAction('drop')}>❌<br/><span>Restart</span></button>
+        <button onClick={() => onAction('elaborate')}>🔄<br/><span>Elaborate</span></button>
+        <button onClick={() => onAction('topics')}>🔠<br/><span>Topics</span></button>
+      </div>}
     </div>
   );
 }

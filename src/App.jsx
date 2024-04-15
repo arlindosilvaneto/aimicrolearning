@@ -5,21 +5,22 @@ import ChatScreen from './components/ChatScreen';
 import LocalStorageService from './lib/LocalStorage';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import prompts from './config/prompts.json';
+import prompts from './config/prompts';
 
 export const AppContext = React.createContext(null);
 
 function App() {
   const [apiKey, setApiKey] = useState(null);
+  const [model, setModel] = useState('gpt-3.5-turbo');
+  const [startPrompt, setStartPrompt] = useState(prompts.startPrompt); 
   const [topicsPrompt, setTopicsPrompt] = useState(prompts.topicsPrompt);
   const [elaboratePrompt, setElaboratePrompt] = useState(prompts.elaboratePrompt);
-  const [morePrompt, setMorePrompt] = useState(prompts.morePrompt);
 
   useEffect(() => {
+    const model = LocalStorageService.get('model');
     const apiKey = LocalStorageService.get('apiKey');
     const topicsPrompt = LocalStorageService.get('topicsPrompt');
     const elaboratePrompt = LocalStorageService.get('elaboratePrompt');
-    const morePrompt = LocalStorageService.get('morePrompt');
 
     if (apiKey) {
       setApiKey(apiKey);
@@ -30,8 +31,8 @@ function App() {
     if (elaboratePrompt) {
       setElaboratePrompt(elaboratePrompt);
     }
-    if (morePrompt) {
-      setMorePrompt(morePrompt);
+    if (model) {
+      setModel(model);
     }
   }, []);
 
@@ -43,6 +44,11 @@ function App() {
   const context = {
     apiKey,
     setApiKey: handleSubmitApiKey,
+    startPrompt,
+    setStartPrompt: (startPrompt) => {
+      setStartPrompt(startPrompt);
+      LocalStorageService.save('startPrompt', startPrompt);
+    },
     topicsPrompt,
     setTopicsPrompt: (topicsPrompt) => {
       setTopicsPrompt(topicsPrompt);
@@ -53,11 +59,11 @@ function App() {
       setElaboratePrompt(elaboratePrompt);
       LocalStorageService.save('elaboratePrompt', elaboratePrompt);
     },
-    morePrompt,
-    setMorePrompt: (morePrompt) => {
-      setMorePrompt(morePrompt);
-      LocalStorageService.save('morePrompt', morePrompt);
-    },
+    model,
+    setModel: (model) => {
+      setModel(model);
+      LocalStorageService.save('model', model);
+    }
   };
 
   return (

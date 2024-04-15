@@ -8,30 +8,33 @@ import {RingLoader} from 'react-spinners';
 
 import './Main.css';
 import { useLocation } from 'react-router-dom';
+import prompts from '../config/prompts';
 
 function ChatScreen() {
   const {sending, history, sendMessage, restart, stats} = useOpenAI();
   const [openSettings, setOpenSettings] = useState(false);
   let location = useLocation();
   
-  const {topicsPrompt, elaboratePrompt, morePrompt} = useContext(AppContext);
+  const {topicsPrompt, elaboratePrompt} = useContext(AppContext);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const q = urlParams.get('q');
-    if (q !== null && q !== '') {
-      console.log(`Search query: ${q}`);
-      sendMessage(q, true);
-      window.scrollTo(0, 0);
+    const query = urlParams.get('q');
+    if (history.length > 0 && query !== null && query !== '') {
+      console.log(`Search query: ${query}`);
+      sendMessage(query, true);
+      window.scrollTo(0, document.body.scrollHeight);
     }
   }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const prompt = e.target.message.value.trim();
-    if (prompt !== '') {
-      await sendMessage(`Lets start from a simple topic about ${prompt} and continue to learn with small pieces.`, true);
+    if (prompt && prompt !== '') {
+      await sendMessage(`${prompts.startPrompt} ${prompt}`, true);
       e.target.reset();
+    } else {
+      console.error('Invalid prompt');
     }
   };
 
@@ -45,16 +48,11 @@ function ChatScreen() {
       case 'elaborate':
         await sendMessage(elaboratePrompt);
         break;
-      case 'more':
-        await sendMessage(
-          morePrompt,
-        );
-        break;
       case 'drop':
         restart();
     }
 
-    window.scrollTo(0, 0);
+    window.scrollTo(0, document.body.scrollHeight);
   });
 
   return (
@@ -63,7 +61,6 @@ function ChatScreen() {
         <div>
           <MessagesCard
             history={history}
-            stats={stats}
             onAction={onAction} />
         </div>
       )}

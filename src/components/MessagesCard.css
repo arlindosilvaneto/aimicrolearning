@@ -11,20 +11,18 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 }
 
 .card-wrapper .card {
   padding: 10px;  
   margin: 10px 5px;
-  margin-bottom: 120px;
-  width: 100%;
-  /* background-color: rgb(115, 170, 176); */
+  /* width: 100%; */
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  /* color: white; */
   line-height: 1.5;
   font-size: larger;  
   border-radius: 10px;
@@ -62,13 +60,13 @@
 }
 
 .message-wrapper .buttons {
-  position: fixed;
+  position: relative;
   bottom: 0;
   padding-top: 10px;
   margin-left: 1%;
-  width: 98%;  
+  width: 98%;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
   background-color: #007bffaa;
   display: flex;
   justify-content: space-between;

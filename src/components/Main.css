@@ -38,6 +38,11 @@ label {
   background-color: #229e51;
 }
 
+.form-container .reset-button {
+  
+  background-color: #d08282;
+}
+
 .settings-button {
   width: 98%;
   padding: 12px 20px;
