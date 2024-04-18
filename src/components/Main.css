@@ -39,7 +39,7 @@ label {
 }
 
 .form-container .reset-button {
-  
+
   background-color: #d08282;
 }
 
@@ -68,7 +68,7 @@ label {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #ffffffaa;
+  background-color: #ffffffcc;
   display: flex;
   justify-content: center;
   align-items: center;

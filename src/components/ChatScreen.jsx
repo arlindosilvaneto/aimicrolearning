@@ -61,28 +61,26 @@ function ChatScreen() {
         <div>
           <MessagesCard
             history={history}
-            onAction={onAction} />
+            onAction={onAction}/>
         </div>
       )}
-      
+
       {sending && <div className='ring-wrapper'>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <RingLoader
-            color="rgb(105, 105, 232)"
-            loading={sending}
-            size={150}
-            aria-label="Loading Spinner"
-            data-testid="loader"/>
-        </div>
+        <RingLoader
+          color="rgb(105, 105, 232)"
+          loading={sending}
+          size={150}
+          aria-label="Loading Spinner"
+          data-testid="loader"/>
       </div>}
       
       {(history.length === 0) && (
         <div>
+          <TopicInput handleSubmit={handleSubmit} />
           <button onClick={() => setOpenSettings(true)} 
             className="settings-button">
               Settings
-          </button>
-          <TopicInput handleSubmit={handleSubmit} />
+          </button>          
         </div>
       )}
 

@@ -15,3 +15,14 @@ h2 {
   text-align: center;
   margin-bottom: 0px;
 }
+
+.reset-button {
+  background-color: transparent !important;
+  border: 0;
+  margin-left: 5px;
+}
+
+.field-wrapper {
+  display: flex;
+  align-items: first baseline;
+}

@@ -3,6 +3,7 @@ import { useContext } from 'react';
 
 import './ConfigForm.css';
 import { Field, Form, Formik } from 'formik';
+import prompts from '../config/prompts';
 
 export default function ConfigForm({onClose}) {
   const {
@@ -28,8 +29,20 @@ export default function ConfigForm({onClose}) {
     onClose();
   }
 
-  const handleReset = (values, _) => {
-    setApiKey('');
+  const resetField = (fieldName) => {
+    if(fieldName === 'model') {
+      setModel('gpt-3.5-turbo');
+    } else if(fieldName === 'apiKey') {
+      setApiKey('');
+    } else if(fieldName === 'startPrompt') {
+      setStartPrompt(prompts.startPrompt);
+    } else if(fieldName === 'topicsPrompt') {
+      setTopicsPrompt(prompts.topicsPrompt);
+    } else if(fieldName === 'elaboratePrompt') {
+      setElaboratePrompt(prompts.elaboratePrompt);
+    }
+
+    onClose();
   }
 
   return (
@@ -41,28 +54,36 @@ export default function ConfigForm({onClose}) {
           onSubmit={handleSubmit}>
             <Form className='form-container'>
               <label>GPT Model:</label>
-              <Field name='model' placeholder='Enter your api key...' className='form-input' />
+              <div className='field-wrapper'>
+                <Field name='model' placeholder='Enter your api key...' className='form-input' />
+                <a className='reset-button' onClick={() => resetField('model')}>🔁</a>
+              </div>
               <label>API Key:</label>
-              <Field type="password" name='apiKey' placeholder='Enter your api key...' className='form-input' />
+              <div className='field-wrapper'>
+                <Field type="password" name='apiKey' placeholder='Enter your api key...' className='form-input' />
+                <a className='reset-button' onClick={() => resetField('apiKey')}>🔁</a>
+              </div>
               <label>Start Prompt:</label>
-              <Field name='startPrompt' placeholder='Enter your start prompt...' className='form-input' as="textarea" />
+              <div className='field-wrapper'>
+                <Field name='startPrompt' placeholder='Enter your start prompt...' className='form-input' as="textarea" />
+                <a className='reset-button' onClick={() => resetField('startPrompt')}>🔁</a>
+              </div>
               <label>Topics Prompt:</label>
-              <Field name='topicsPrompt' placeholder='Enter your topics prompt...' className='form-input' as="textarea" />
+              <div className='field-wrapper'>
+                <Field name='topicsPrompt' placeholder='Enter your topics prompt...' className='form-input' as="textarea" />
+                <a className='reset-button' onClick={() => resetField('topicsPrompt')}>🔁</a>
+              </div>
               <label>Elaborate Prompt:</label>
-              <Field name='elaboratePrompt' placeholder='Enter your elaborate prompt...' className='form-input' as="textarea" />
+              <div className='field-wrapper'>
+                <Field name='elaboratePrompt' placeholder='Enter your elaborate prompt...' className='form-input' as="textarea" />
+                <a className='reset-button' onClick={() => resetField('elaboratePrompt')}>🔁</a>
+              </div>
 
               <button
                 className='submit-button send-button'
                 type='submit'>
                   Save Settings
               </button>
-
-              {/* <hr/>
-              <button
-                className='submit-button reset-button'
-                onClick={handleReset}>
-                  Reset
-              </button> */}
             </Form>
           </Formik>
       </div>
