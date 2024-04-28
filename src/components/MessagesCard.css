@@ -1,5 +1,4 @@
 .message-wrapper {
-  /* background-color: #e6ffda; */
   position: relative;
   top: 0;
   left: 0;
@@ -12,13 +11,13 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-bottom: 150px;
+  padding-bottom: 60%;
 }
 
-.card-wrapper .card {
+.message-wrapper .card-wrapper .card {
   padding: 10px;  
   margin: 10px 5px;
-  /* width: 100%; */
+  max-width: 96%;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: center;
@@ -30,52 +29,49 @@
   border-top: 10px solid #007bffaa;
   border-bottom: 10px solid #007bffaa;
   white-space: pre-wrap; 
-
-  a:not(.stats) {
-    text-decoration: none;
-    color: white;
-    padding: 15px 15px;
-    border-radius: 30px;
-    background-color: #007bff11;
-    color: black;
-    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
-    text-shadow: 1px 1px 1px rgba(200, 200, 200, 0.2);
-    white-space: wrap;
-    display: block;
-  }
-
-  a.stats {
-    position: absolute;
-    top: 20px;
-    right: 15px;
-    background-color: transparent;
-    padding: 5px;
-  }
-
-  li {
-    list-style-type: none;
-    padding: 0px;    
-    margin: 0px 0;
-    margin-left: -10%;
-  }
 }
 
-.message-wrapper .buttons {
+.message-wrapper .card-wrapper .card a:not(.stats) {
+  text-decoration: none;
+  color: black;
+  text-shadow: 1px 1px 1px rgba(200, 200, 200, 0.2);
+}
+
+.message-wrapper .card-wrapper .card .link-wrapper {
+  padding: 15px 15px;
+  border-radius: 30px;
+  background-color: #007bff11;
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.message-wrapper .card-wrapper .card a.stats {
+  position: fixed;
+  top: 20px;
+  right: 15px;
+  background-color: transparent;
+  padding: 5px;
+}
+
+.message-wrapper .card-wrapper .card li {
+  list-style-type: none;
+  padding: 0px;    
+  margin: 0px;
+  margin-left: -1%;
+}
+
+.button-bar {
   position: fixed;
   bottom: 0;
   padding-top: 10px;
-  margin-left: 1%;
-  /* margin-bottom: 10px; */
-  width: 98%;
+  width: 100%;
   box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
   background-color: #007bffaa;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 }
 
-.buttons button {
+.button-bar button {
   padding: 0 10px 10px 10px;
   margin: 5px;
   border-radius: 5px;

@@ -2,6 +2,7 @@ import Markdown from 'react-markdown';
 import './MessagesCard.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
 import { removeStopwords } from 'stopword';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const QUERY_LIMIT = 150;
 
@@ -25,29 +26,38 @@ function replaceSentences(text) {
 
 const renderers = {
   a({children, href}) {
-    return  <Link to={href}>🔗 {children}</Link>
+    return(
+      <div className='link-wrapper'>
+        <Link to={href}>🔗 {children}</Link>
+      </div>
+    );
   }
 }
 
 export function MessagesCard({ history, onAction}) {
+  const navigate = useHistory();
+
   const messages = history.filter(message => message && message.role !== 'user');
 
   return (
-    <div className='message-wrapper'>      
-      <div className='card-wrapper'>
-        {messages.map((message, index) => (
-          <div key={index} className='card'>
-            <Markdown components={renderers} 
-              children={replaceSentences(message.content)} />
-          </div>
-        ))}
+    <>
+      <div className='message-wrapper'>      
+        <div className='card-wrapper'>
+          {messages.map((message, index) => (
+            <div key={index} className='card'>
+              <Markdown components={renderers} 
+                children={replaceSentences(message.content)} />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {messages.length > 0 && <div className='buttons'>
-        <button onClick={() => onAction('drop')}>❌<br/><span>Restart</span></button>
-        <button onClick={() => onAction('elaborate')}>🔄<br/><span>Elaborate</span></button>
-        <button onClick={() => onAction('topics')}>🔠<br/><span>Topics</span></button>
-      </div>}
-    </div>
+      <div className='button-bar'>
+          <button onClick={() => onAction('drop')}>❌<br/><span>Restart</span></button>
+          <button onClick={() => onAction('elaborate')}>🔄<br/><span>Elaborate</span></button>
+          <button onClick={() => onAction('topics')}>🔠<br/><span>Topics</span></button>
+          <button onClick={() => navigate.push('settings') }>⚙️<br/><span>Settings</span></button>
+      </div>
+    </>
   );
 }

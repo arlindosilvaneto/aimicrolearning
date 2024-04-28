@@ -1,4 +1,4 @@
-class LocalStorageService {
+export default class LocalStorageService {
   // Save data to local storage
   static save(key, data) {
     try {
@@ -32,5 +32,3 @@ class LocalStorageService {
     }
   }
 }
-
-export default LocalStorageService;

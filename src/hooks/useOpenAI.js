@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { removeStopwords } from 'stopword';
 
 import openai from 'openai';
-import { useContext } from 'react';
-import { AppContext } from '../App';
+import useConfig from './useConfig';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 
 export default function useOpenAI() {
@@ -13,7 +13,8 @@ export default function useOpenAI() {
   const [history, setHistory] = useState([]);
   const [stats, setStats] = useState({});
 
-  const { apiKey, model } = useContext(AppContext);
+  const { config: { apiKey, model } } = useConfig();
+  const navigate = useHistory();
 
   const CONTEXT_LIMIT = 150;
 
@@ -28,9 +29,10 @@ export default function useOpenAI() {
     try {
       const lastMessages = history.length > 0 ? [history[history.length - 1]] : [];
       const userMessages = [...topics, ...lastMessages];
-      const context = userMessages.map(({ content, role }) => {
+
+      const context = userMessages.filter(Boolean).map(({ content, role }) => {
         const shortContent = removeStopwords(content.split(' ')).join(' ');
-        console.log(shortContent)
+
         return {
           content: shortContent.substring(0, CONTEXT_LIMIT),
           role
@@ -56,12 +58,15 @@ export default function useOpenAI() {
       }
     } catch (error) {
       console.error('Error during OpenAI message:', error);
+      throw error;
     }
   };
 
   const restart = () => {
     setHistory([]);
     setTopics([]);
+
+    navigate.push('');
   }
 
   const sendOpenAIMessage = async (prompt, role = 'user', contextMessages = []) => {

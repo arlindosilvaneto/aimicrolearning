@@ -1,59 +1,65 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MessagesCard } from './MessagesCard';
-import TopicInput from './TopicInput';
 import useOpenAI from '../hooks/useOpenAI';
-import ConfigForm from './ConfigForm';
-import { AppContext } from '../App';
 import {RingLoader} from 'react-spinners';
+import { useLocation, useHistory } from 'react-router-dom';
+import useConfig from '../hooks/useConfig';
 
-import './Main.css';
-import { useLocation } from 'react-router-dom';
-import prompts from '../config/prompts';
+import './ChatScreen.css';
 
-function ChatScreen() {
-  const {sending, history, sendMessage, restart, stats} = useOpenAI();
-  const [openSettings, setOpenSettings] = useState(false);
-  let location = useLocation();
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export default function ChatScreen() {
+  const [prompt, setPrompt] = useState('');
+  const {sending, history, sendMessage, restart} = useOpenAI();
+  const query = useQuery();
+  const navigate = useHistory();
   
-  const {topicsPrompt, elaboratePrompt} = useContext(AppContext);
+  const {config: {apiKey, startPrompt, topicsPrompt, elaboratePrompt}} = useConfig();
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const query = urlParams.get('q');
-    if (history.length > 0 && query !== null && query !== '') {
-      console.log(`Search query: ${query}`);
-      sendMessage(query, true);
+    if(!apiKey) {
+      navigate.replace('settings');
+    }
+  });
+
+  useEffect(() => {
+    setPrompt(query.get('q'));
+  }, [query]);
+
+  useEffect(() => {
+    if (prompt !== null && prompt !== '') {
+      console.log(`Search query: ${prompt}`);
+      if(history.length === 0) {
+        sendMessage(`${startPrompt} ${prompt}`, true);
+      } else {
+        sendMessage(prompt, true);
+      }
       window.scrollTo(0, document.body.scrollHeight);
     }
-  }, [location]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const prompt = e.target.message.value.trim();
-    if (prompt && prompt !== '') {
-      await sendMessage(`${prompts.startPrompt} ${prompt}`, true);
-      e.target.reset();
-    } else {
-      console.error('Invalid prompt');
-    }
-  };
+  }, [prompt]);
 
   const onAction = useCallback(async (direction) => {
     switch (direction) {
       case 'topics':
-        await sendMessage(topicsPrompt, false, message => {
-          return message;
-        });
+        await sendMessage(topicsPrompt);
         break;
       case 'elaborate':
         await sendMessage(elaboratePrompt);
         break;
       case 'drop':
         restart();
+        break;
+      default:
+        break;
     }
 
     window.scrollTo(0, document.body.scrollHeight);
-  });
+  }, [sendMessage, topicsPrompt, elaboratePrompt, restart]);
 
   return (
     <div>
@@ -73,20 +79,6 @@ function ChatScreen() {
           aria-label="Loading Spinner"
           data-testid="loader"/>
       </div>}
-      
-      {(history.length === 0) && (
-        <div>
-          <TopicInput handleSubmit={handleSubmit} />
-          <button onClick={() => setOpenSettings(true)} 
-            className="settings-button">
-              Settings
-          </button>          
-        </div>
-      )}
-
-      {openSettings && <ConfigForm onClose={() => setOpenSettings(false)} />}
     </div>
   );
 }
-
-export default ChatScreen;

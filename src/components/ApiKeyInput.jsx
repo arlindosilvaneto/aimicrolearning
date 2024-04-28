@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Field, Form, Formik } from 'formik';
 import './Main.css';
 
 function ApiKeyInput({ onSubmit }) {
-  const [apiKey, setApiKey] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = ({apiKey}) => {
     onSubmit(apiKey);
   };
 
   return (
-    <form className='form-container' onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className='form-input'
-        placeholder="Enter your OpenAI API key"
-        value={apiKey}
-        onChange={(e) => setApiKey(e.target.value)}
-      />
-      <button className='submit-button' type="submit">Set your OpenAI Key</button>
-    </form>
+    <Formik onSubmit={handleSubmit} initialValues={{apiKey: ''}}>
+      <Form className='form-container'>
+        <Field
+          className='form-input'
+          placeholder="Enter your OpenAI API key"
+          name='apiKey'
+        />
+
+        <button className='submit-button' type="submit">Set your OpenAI Key</button>
+      </Form>
+    </Formik>
   );
 }
 
